@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import ThemeRegistry from "@/components/ThemeRegistry";
+import ThemeRegistry from "@/app/ThemeRegistry";
+import '@/app/global.css';
+import { roboto } from '@/app/fonts';
 
 export const metadata: Metadata = {
   title: "Trading Journal",
@@ -13,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${roboto.className} antialiased`}>
         <ThemeRegistry>{children}</ThemeRegistry>
       </body>
     </html>
