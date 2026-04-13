@@ -11,16 +11,15 @@ import {
 } from "@mui/material";
 import {
     HomeRounded,
-    BarChartRounded,
     ShowChartRounded,
     LogoutRounded,
 } from "@mui/icons-material";
+import BookIcon from '@mui/icons-material/Book';
 import { token } from "@/app/lib/token";
-
 const NAV_ITEMS = [
     { label: "Feed",      icon: <HomeRounded />,      href: "/dashboard" },
     { label: "Trades",    icon: <ShowChartRounded />,  href: "/dashboard/trades" },
-    { label: "Analytics", icon: <BarChartRounded />,   href: "/dashboard/analytics" },
+    { label: "Strategies", icon: <BookIcon />,   href: "/dashboard/strategies" },
 ];
 
 export default function LeftPanel() {
