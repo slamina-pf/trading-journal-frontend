@@ -19,6 +19,12 @@ interface IndicatorDraft {
     description: string;
 }
 
+interface ChecklistDraft {
+    key:         number;
+    name:        string;
+    description: string;
+}
+
 interface StepDraft {
     key:     number;
     title:   string;
@@ -28,6 +34,7 @@ interface StepDraft {
 export interface StrategyFormValues {
     name:       string;
     indicators: { name: string; description: string }[];
+    checklists: { name: string; description: string }[];
     steps:      { position: number; title?: string; content: string }[];
 }
 
@@ -35,6 +42,7 @@ interface Props {
     initialValues?: {
         name:       string;
         indicators: { name: string; description: string }[];
+        checklists: { name: string; description: string }[];
         steps:      { title: string | null; content: string }[];
     };
     submitLabel: string;
@@ -50,6 +58,10 @@ function makeIndicatorDrafts(indicators: { name: string; description: string }[]
     return indicators.map((i) => ({ key: nextKey(), name: i.name, description: i.description }));
 }
 
+function makeChecklistDrafts(checklists: { name: string; description: string }[]): ChecklistDraft[] {
+    return checklists.map((c) => ({ key: nextKey(), name: c.name, description: c.description }));
+}
+
 function makeStepDrafts(steps: { title: string | null; content: string }[]): StepDraft[] {
     return steps.map((s) => ({ key: nextKey(), title: s.title ?? "", content: s.content }));
 }
@@ -58,6 +70,9 @@ export default function StrategyForm({ initialValues, submitLabel, loading, onSu
     const [name, setName]             = useState(initialValues?.name ?? "");
     const [indicators, setIndicators] = useState<IndicatorDraft[]>(
         initialValues ? makeIndicatorDrafts(initialValues.indicators) : []
+    );
+    const [checklists, setChecklists] = useState<ChecklistDraft[]>(
+        initialValues ? makeChecklistDrafts(initialValues.checklists) : []
     );
     const [steps, setSteps]           = useState<StepDraft[]>(
         initialValues ? makeStepDrafts(initialValues.steps) : [{ key: nextKey(), title: "", content: "" }]
@@ -73,6 +88,16 @@ export default function StrategyForm({ initialValues, submitLabel, loading, onSu
 
     const updateIndicator = (key: number, field: "name" | "description", value: string) =>
         setIndicators((prev) => prev.map((i) => (i.key === key ? { ...i, [field]: value } : i)));
+
+    // ── Checklists ──────────────────────────────────────────────────────────
+    const addChecklist = () =>
+        setChecklists((prev) => [...prev, { key: nextKey(), name: "", description: "" }]);
+
+    const removeChecklist = (key: number) =>
+        setChecklists((prev) => prev.filter((c) => c.key !== key));
+
+    const updateChecklist = (key: number, field: "name" | "description", value: string) =>
+        setChecklists((prev) => prev.map((c) => (c.key === key ? { ...c, [field]: value } : c)));
 
     // ── Steps ────────────────────────────────────────────────────────────────
     const addStep = () =>
@@ -96,6 +121,10 @@ export default function StrategyForm({ initialValues, submitLabel, loading, onSu
             setError("Every indicator must have a name and a description.");
             return;
         }
+        if (checklists.some((c) => !c.name.trim() || !c.description.trim())) {
+            setError("Every checklist item must have a name and a description.");
+            return;
+        }
         if (steps.some((s) => !s.content.trim())) {
             setError("Every step must have content.");
             return;
@@ -107,6 +136,10 @@ export default function StrategyForm({ initialValues, submitLabel, loading, onSu
                 indicators: indicators.map((i) => ({
                     name:        i.name.trim(),
                     description: i.description.trim(),
+                })),
+                checklists: checklists.map((c) => ({
+                    name:        c.name.trim(),
+                    description: c.description.trim(),
                 })),
                 steps: steps.map((s, idx) => ({
                     position: idx + 1,
@@ -182,6 +215,58 @@ export default function StrategyForm({ initialValues, submitLabel, loading, onSu
                     sx={{ alignSelf: "flex-start", borderRadius: 2 }}
                 >
                     Add indicator
+                </Button>
+            </Box>
+
+            <Divider />
+
+            {/* Checklists */}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Typography variant="subtitle2" fontWeight={700} color="text.secondary" sx={{ textTransform: "uppercase", letterSpacing: 0.5 }}>
+                    Checklist
+                </Typography>
+
+                {checklists.length === 0 && (
+                    <Typography variant="body2" color="text.secondary">
+                        No checklist items added yet.
+                    </Typography>
+                )}
+
+                {checklists.map((checklist) => (
+                    <Box key={checklist.key} sx={{ display: "flex", gap: 1.5, alignItems: "flex-start" }}>
+                        <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 1 }}>
+                            <TextField
+                                placeholder="Item name"
+                                value={checklist.name}
+                                onChange={(e) => updateChecklist(checklist.key, "name", e.target.value)}
+                                size="small"
+                                fullWidth
+                                inputProps={{ maxLength: 100 }}
+                            />
+                            <TextField
+                                placeholder="What should be verified?"
+                                value={checklist.description}
+                                onChange={(e) => updateChecklist(checklist.key, "description", e.target.value)}
+                                size="small"
+                                fullWidth
+                                multiline
+                                minRows={2}
+                            />
+                        </Box>
+                        <IconButton size="small" onClick={() => removeChecklist(checklist.key)} sx={{ mt: "4px" }}>
+                            <DeleteOutlineIcon fontSize="small" />
+                        </IconButton>
+                    </Box>
+                ))}
+
+                <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<AddIcon />}
+                    onClick={addChecklist}
+                    sx={{ alignSelf: "flex-start", borderRadius: 2 }}
+                >
+                    Add checklist item
                 </Button>
             </Box>
 

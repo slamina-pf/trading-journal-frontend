@@ -56,6 +56,7 @@ export default function EditStrategyPage() {
                     initialValues={{
                         name:       strategy.name,
                         indicators: strategy.indicators.map((i) => ({ name: i.name, description: i.description })),
+                        checklists: strategy.checklists.map((c) => ({ name: c.name, description: c.description })),
                         steps:      strategy.steps.map((s) => ({ title: s.title, content: s.content })),
                     }}
                     submitLabel="Save changes"

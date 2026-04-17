@@ -111,6 +111,40 @@ export default function ViewStrategyPage() {
 
                     <Divider />
 
+                    {/* Checklists */}
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                        <Typography
+                            variant="subtitle2"
+                            fontWeight={700}
+                            color="text.secondary"
+                            sx={{ textTransform: "uppercase", letterSpacing: 0.5 }}
+                        >
+                            Checklist
+                        </Typography>
+
+                        {strategy.checklists.length === 0 ? (
+                            <Typography variant="body2" color="text.secondary">
+                                No checklist items defined.
+                            </Typography>
+                        ) : (
+                            strategy.checklists.map((item, index) => (
+                                <Box key={item.id}>
+                                    <Box sx={{ py: 1 }}>
+                                        <Typography fontWeight={600} gutterBottom>
+                                            {item.name}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "pre-wrap" }}>
+                                            {item.description}
+                                        </Typography>
+                                    </Box>
+                                    {index < strategy.checklists.length - 1 && <Divider />}
+                                </Box>
+                            ))
+                        )}
+                    </Box>
+
+                    <Divider />
+
                     {/* Steps */}
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                         <Typography

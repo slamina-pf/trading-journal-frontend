@@ -19,12 +19,22 @@ export interface StrategyIndicator {
     updated_at:  string;
 }
 
+export interface StrategyChecklist {
+    id:          number;
+    strategy_id: number;
+    name:        string;
+    description: string;
+    created_at:  string;
+    updated_at:  string;
+}
+
 export interface Strategy {
     id:         number;
     user_id:    number;
     name:       string;
     steps:      StrategyStep[];
     indicators: StrategyIndicator[];
+    checklists: StrategyChecklist[];
     version:    number | null;
     created_at: string;
     updated_at: string;
@@ -34,12 +44,14 @@ export interface CreateStrategyPayload {
     name:       string;
     steps:      { position: number; title?: string; content: string }[];
     indicators: { name: string; description: string }[];
+    checklists: { name: string; description: string }[];
 }
 
 export interface UpdateStrategyPayload {
     name?:       string;
     steps?:      { position: number; title?: string; content: string }[];
     indicators?: { name: string; description: string }[];
+    checklists?: { name: string; description: string }[];
 }
 
 export const strategyApi = {
